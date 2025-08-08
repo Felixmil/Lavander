@@ -126,14 +126,22 @@
             ht: Math.max(0, customPrice || 0),
             ttc: roundToNearest(Math.max(0, customPrice || 0) * 1.20, roundingStep)
         };
+        const customMarginPct = costs.costPerUnitOut > 0
+            ? ((cu.ht - costs.costPerUnitOut) / costs.costPerUnitOut) * 100
+            : 0;
+        const customMarginPctRounded = Math.round(customMarginPct);
 
         const tiers = [
             { id: "BreakEven", value: be.ht, ttc: be.ttc, label: "Break-even", margin: 0 },
             { id: "Budget", value: bu.ht, ttc: bu.ttc, label: "Budget (25% margin)", margin: 25 },
             { id: "Standard", value: st.ht, ttc: st.ttc, label: "Standard (50% margin)", margin: 50 },
             { id: "Premium", value: pr.ht, ttc: pr.ttc, label: "Premium (100% margin)", margin: 100 },
-            { id: "Custom", value: cu.ht, ttc: cu.ttc, label: 'Custom (desired)', margin: null },
+            { id: "Custom", value: cu.ht, ttc: cu.ttc, label: `Custom (${customMarginPctRounded}% margin)`, margin: customMarginPctRounded },
         ];
+
+        // Update custom label in the suggestions grid to reflect computed margin
+        const customLabelEl = document.querySelector('[data-tier="custom"] .suggestion-label');
+        if (customLabelEl) customLabelEl.textContent = `Custom (${customMarginPctRounded}% margin)`;
 
         for (const tier of tiers) {
             const price = tier.value;
