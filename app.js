@@ -14,7 +14,7 @@
             bg: 'rgba(147,51,234,0.95)', // deep violet
             border: 'rgba(126,34,206,1)'
         },
-        fixed: {
+        overhead: {
             bg: 'rgba(59,130,246,0.95)', // periwinkle blue
             border: 'rgba(37,99,235,1)'
         },
@@ -49,16 +49,16 @@
         shippingHours,
     }) {
         const materialsTotal = costPerUnit * numUnits + shippingMaterials;
-        const baseLabour = timeHours * hourlyRate;
-        const overheadLabour = (designHours + commsHours + shippingHours) * hourlyRate;
-        const labourTotal = baseLabour + overheadLabour;
-        const fixedTotal = 0; // fixed monetary costs replaced by time overheads
-        const totalCost = materialsTotal + labourTotal + fixedTotal;
+        const productionTotal = timeHours * hourlyRate;
+        const overheadTotal = (designHours + commsHours + shippingHours) * hourlyRate;
+        const labourTotal = productionTotal + overheadTotal;
+        const totalCost = materialsTotal + labourTotal;
         const costPerUnitOut = numUnits > 0 ? totalCost / numUnits : 0;
         return {
             materialsTotal,
+            productionTotal,
+            overheadTotal,
             labourTotal,
-            fixedTotal,
             totalCost,
             costPerUnitOut,
         };
@@ -172,7 +172,6 @@
         const form = document.getElementById("inputsForm");
         form.addEventListener("input", update);
         document.getElementById("resetBtn").addEventListener("click", resetInputs);
-        document.getElementById("printBtn").addEventListener("click", () => window.print());
 
         // sensible defaults for quicker start
         select("costPerUnit").value = "0.3";
@@ -209,8 +208,8 @@
             labels,
             datasets: [
                 { label: 'Materials', data: labels.map(() => costs.materialsTotal), backgroundColor: palette.materials.bg, borderColor: palette.materials.border, borderWidth: 1, stack: 'stack0' },
-                { label: 'Labour', data: labels.map(() => costs.labourTotal), backgroundColor: palette.labour.bg, borderColor: palette.labour.border, borderWidth: 1, stack: 'stack0' },
-                { label: 'Fixed', data: labels.map(() => costs.fixedTotal), backgroundColor: palette.fixed.bg, borderColor: palette.fixed.border, borderWidth: 1, stack: 'stack0' },
+                { label: 'Production', data: labels.map(() => costs.productionTotal), backgroundColor: palette.labour.bg, borderColor: palette.labour.border, borderWidth: 1, stack: 'stack0' },
+                { label: 'Overhead', data: labels.map(() => costs.overheadTotal), backgroundColor: palette.overhead.bg, borderColor: palette.overhead.border, borderWidth: 1, stack: 'stack0' },
                 { label: 'Profit', data: profitList, backgroundColor: palette.profit.bg, borderColor: palette.profit.border, borderWidth: 1, stack: 'stack0' },
             ]
         };
@@ -236,11 +235,11 @@
         if (!ctx) return;
         const styles = getComputedStyle(document.documentElement);
         const data = {
-            labels: ['Materials', 'Labour', 'Fixed'],
+            labels: ['Materials', 'Production', 'Overhead'],
             datasets: [{
-                data: [costs.materialsTotal, costs.labourTotal, costs.fixedTotal],
-                backgroundColor: [palette.materials.bg, palette.labour.bg, palette.fixed.bg],
-                borderColor: [palette.materials.border, palette.labour.border, palette.fixed.border],
+                data: [costs.materialsTotal, costs.productionTotal, costs.overheadTotal],
+                backgroundColor: [palette.materials.bg, palette.labour.bg, palette.overhead.bg],
+                borderColor: [palette.materials.border, palette.labour.border, palette.overhead.border],
                 borderWidth: 1
             }]
         };

@@ -21,7 +21,6 @@
             <h1>Lavender Pricing Calculator</h1>
             <div class="header-actions">
                 <button id="resetBtn" class="btn btn-secondary" title="Clear all inputs">Reset</button>
-                <button id="printBtn" class="btn btn-primary" title="Print or save as PDF">Export</button>
             </div>
         </div>
     </header>
@@ -30,6 +29,19 @@
         <section class="card inputs-card">
             <h2>Inputs</h2>
             <form id="inputsForm" class="inputs-grid" autocomplete="off">
+
+                <!-- Order -->
+                <h3 class="inputs-subtitle">Order</h3>
+                <div class="field">
+                    <label for="numUnits">Units ordered</label>
+                    <input id="numUnits" type="number" min="0" step="1" placeholder="e.g. 150" />
+                </div>
+
+                <div class="field">
+                    <label for="timeHours">Estimated Production time (hours)</label>
+                    <input id="timeHours" type="number" min="0" step="0.1" placeholder="e.g. 8" />
+                </div>
+
                 <!-- Materials -->
                 <h3 class="inputs-subtitle">Materials</h3>
                 <div class="field">
@@ -41,19 +53,11 @@
                     <input id="shippingMaterials" type="number" min="0" step="0.01" placeholder="e.g. 20" />
                 </div>
 
-                <!-- Order -->
-                <h3 class="inputs-subtitle">Order</h3>
-                <div class="field">
-                    <label for="numUnits">Units ordered</label>
-                    <input id="numUnits" type="number" min="0" step="1" placeholder="e.g. 150" />
-                </div>
+
 
                 <!-- Time -->
-                <h3 class="inputs-subtitle">Time</h3>
-                <div class="field">
-                    <label for="timeHours">Estimated total time (hours)</label>
-                    <input id="timeHours" type="number" min="0" step="0.1" placeholder="e.g. 8" />
-                </div>
+                <h3 class="inputs-subtitle">Overhead</h3>
+
                 <div class="field">
                     <label for="designHours">Time: Design preparation (hours)</label>
                     <input id="designHours" type="number" min="0" step="0.1" placeholder="e.g. 1.0" />
@@ -68,14 +72,14 @@
                 </div>
 
                 <!-- Rates -->
-                <h3 class="inputs-subtitle">Rates</h3>
+                <h3 class="inputs-subtitle">Salary</h3>
                 <div class="field">
-                    <label for="hourlyRate">Your hourly rate (€ / hour)</label>
+                    <label for="hourlyRate">Hourly rate (€ / hour)</label>
                     <input id="hourlyRate" type="number" min="0" step="0.5" placeholder="e.g. 25" />
                 </div>
 
                 <!-- Custom -->
-                <h3 class="inputs-subtitle">Custom</h3>
+                <h3 class="inputs-subtitle">Custom Price</h3>
                 <div class="field">
                     <label for="customPrice">Desired price per unit (HT, €)</label>
                     <input id="customPrice" type="number" min="0" step="0.01" placeholder="e.g. 1.50" />
