@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Lavender Pricing Calculator</title>
+    <meta name="description"
+        content="Set the right price per unit for custom lavender pouches with cost breakdowns and smart suggestions." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><text y='50%' x='50%' dominant-baseline='middle' text-anchor='middle' font-size='48'>💜</text></svg>">
+</head>
+
+<body>
+    <header class="app-header">
+        <div class="container header-inner">
+            <h1>Lavender Pricing Calculator</h1>
+            <div class="header-actions">
+                <button id="resetBtn" class="btn btn-secondary" title="Clear all inputs">Reset</button>
+                <button id="printBtn" class="btn btn-primary" title="Print or save as PDF">Export</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container app-grid">
+        <section class="card inputs-card">
+            <h2>Inputs</h2>
+            <form id="inputsForm" class="inputs-grid" autocomplete="off">
+                <!-- Materials -->
+                <h3 class="inputs-subtitle">Materials</h3>
+                <div class="field">
+                    <label for="costPerUnit">Raw material cost per unit (€)</label>
+                    <input id="costPerUnit" type="number" min="0" step="0.01" placeholder="e.g. 1.20" />
+                </div>
+                <div class="field">
+                    <label for="shippingMaterials">Shipping/packaging materials (fixed, €)</label>
+                    <input id="shippingMaterials" type="number" min="0" step="0.01" placeholder="e.g. 20" />
+                </div>
+
+                <!-- Order -->
+                <h3 class="inputs-subtitle">Order</h3>
+                <div class="field">
+                    <label for="numUnits">Units ordered</label>
+                    <input id="numUnits" type="number" min="0" step="1" placeholder="e.g. 150" />
+                </div>
+
+                <!-- Time -->
+                <h3 class="inputs-subtitle">Time</h3>
+                <div class="field">
+                    <label for="timeHours">Estimated total time (hours)</label>
+                    <input id="timeHours" type="number" min="0" step="0.1" placeholder="e.g. 8" />
+                </div>
+                <div class="field">
+                    <label for="designHours">Time: Design preparation (hours)</label>
+                    <input id="designHours" type="number" min="0" step="0.1" placeholder="e.g. 1.0" />
+                </div>
+                <div class="field">
+                    <label for="commsHours">Time: Customer communication (hours)</label>
+                    <input id="commsHours" type="number" min="0" step="0.1" placeholder="e.g. 0.5" />
+                </div>
+                <div class="field">
+                    <label for="shippingHours">Time: Order shipping (hours)</label>
+                    <input id="shippingHours" type="number" min="0" step="0.1" placeholder="e.g. 0.5" />
+                </div>
+
+                <!-- Rates -->
+                <h3 class="inputs-subtitle">Rates</h3>
+                <div class="field">
+                    <label for="hourlyRate">Your hourly rate (€ / hour)</label>
+                    <input id="hourlyRate" type="number" min="0" step="0.5" placeholder="e.g. 25" />
+                </div>
+
+                <!-- Custom -->
+                <h3 class="inputs-subtitle">Custom</h3>
+                <div class="field">
+                    <label for="customPrice">Desired price per unit (HT, €)</label>
+                    <input id="customPrice" type="number" min="0" step="0.01" placeholder="e.g. 1.50" />
+                    <small class="hint">Optional. Used for the Custom suggestion.</small>
+                </div>
+            </form>
+        </section>
+
+        <section class="card results-card">
+            <h2>Order summary</h2>
+            <div class="summary-grid">
+                <div class="summary-item">
+                    <div class="summary-label">Total cost</div>
+                    <div id="totalCost" class="summary-value">€0.00</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-label">Cost per unit</div>
+                    <div id="costPerUnitOut" class="summary-value">€0.00</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-label">Units</div>
+                    <div id="unitsOut" class="summary-value">0</div>
+                </div>
+            </div>
+
+            <h2 class="mt">Cost breakdown</h2>
+            <div class="chart-container chart-sm">
+                <canvas id="costBreakdownChart"></canvas>
+            </div>
+
+        </section>
+
+        <section class="card strategies-card full-row">
+            <h2>Price strategies</h2>
+            <p class="hint">Suggested prices and projected revenue/profit (HT) for each strategy.</p>
+            <div class="suggestions-grid">
+                <div class="suggestion" data-tier="breakEven">
+                    <div class="suggestion-label">Break-even</div>
+                    <div id="suggestBreakEven" class="suggestion-value">€0.00</div>
+                    <div id="suggestBreakEvenTTC" class="suggestion-sub">TTC: €0.00</div>
+                    <div id="suggestBreakEvenMeta" class="suggestion-meta">—</div>
+                </div>
+                <div class="suggestion" data-tier="budget">
+                    <div class="suggestion-label">Budget (25% margin)</div>
+                    <div id="suggestBudget" class="suggestion-value">€0.00</div>
+                    <div id="suggestBudgetTTC" class="suggestion-sub">TTC: €0.00</div>
+                    <div id="suggestBudgetMeta" class="suggestion-meta">—</div>
+                </div>
+                <div class="suggestion" data-tier="standard">
+                    <div class="suggestion-label">Standard (50% margin)</div>
+                    <div id="suggestStandard" class="suggestion-value">€0.00</div>
+                    <div id="suggestStandardTTC" class="suggestion-sub">TTC: €0.00</div>
+                    <div id="suggestStandardMeta" class="suggestion-meta">—</div>
+                </div>
+                <div class="suggestion" data-tier="premium">
+                    <div class="suggestion-label">Premium (100% margin)</div>
+                    <div id="suggestPremium" class="suggestion-value">€0.00</div>
+                    <div id="suggestPremiumTTC" class="suggestion-sub">TTC: €0.00</div>
+                    <div id="suggestPremiumMeta" class="suggestion-meta">—</div>
+                </div>
+                <div class="suggestion" data-tier="custom">
+                    <div class="suggestion-label">Custom (desired)</div>
+                    <div id="suggestCustom" class="suggestion-value">€0.00</div>
+                    <div id="suggestCustomTTC" class="suggestion-sub">TTC: €0.00</div>
+                    <div id="suggestCustomMeta" class="suggestion-meta">—</div>
+                </div>
+            </div>
+            <p class="note">Suggestions are rounded to the nearest €0.10 for practical pricing.</p>
+        </section>
+
+        <section class="card chart-card full-row">
+            <h2>Strategies chart</h2>
+            <div class="chart-container">
+                <canvas id="strategyChart"></canvas>
+            </div>
+        </section>
+    </main>
+
+    <footer class="app-footer">
+        <div class="container">
+            <small>Made with 💜 for Atelier Lavande — Your data stays in your browser.</small>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+    <script src="app.js"></script>
+</body>
+
+</html>
